@@ -1,14 +1,18 @@
-window.addEventListener("keydown", function (e) {
-  let audioSelected = document.querySelector(`audio[data-key="${e.keyCode}"]`);
-  if (!audioSelected) return;
-  audioSelected.currentTime = 0;
-  audioSelected.play();
+function removeTransition(e) {
+  if (e.propertyName !== "transform") return;
+  e.target.classList.remove("playing");
+}
 
-  let keyElement = document.querySelector(`.key[data-key="${e.keyCode}"]`);
-  keyElement.classList.add("playing");
-});
+function playSound(e) {
+  const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+  const key = document.querySelector(`div[data-key="${e.keyCode}"]`);
+  if (!audio) return;
 
-window.addEventListener("keyup", function (e) {
-  let keyElement = document.querySelector(`.key[data-key="${e.keyCode}"]`);
-  keyElement.classList.remove("playing");
-});
+  key.classList.add("playing");
+  audio.currentTime = 0;
+  audio.play();
+}
+
+const keys = Array.from(document.querySelectorAll(".key"));
+keys.forEach((key) => key.addEventListener("transitionend", removeTransition));
+window.addEventListener("keydown", playSound);
